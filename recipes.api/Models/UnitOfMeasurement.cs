@@ -35,6 +35,30 @@ public class UnitOfMeasurement
             builder.Property(u => u.UpdatedAt)
                 .IsRequired()
                 .HasColumnType("datetime2(7)");
+
+            // Seed standard units of measurement
+            builder.HasData(
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "cup", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "tablespoon", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "teaspoon", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "ounce", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "pound", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "gram", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "kilogram", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "milliliter", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "liter", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "pinch", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "dash", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "whole", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "piece", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "slice", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "clove", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "can", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "package", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "jar", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "bottle", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow },
+                new UnitOfMeasurement { Id = Guid.NewGuid(), Name = "box", CreatedAt = DateTime.UtcNow, UpdatedAt = DateTime.UtcNow }
+            );
         }
     }
 }

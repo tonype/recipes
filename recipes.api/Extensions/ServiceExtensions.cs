@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Recipes.Api.Data;
+using Recipes.Api.Data.Seeding;
 using Recipes.Api.Services.Implementations;
 using Recipes.Api.Services.Interfaces;
 
@@ -31,6 +32,21 @@ public static class ServiceExtensions
     {
         // Register FluentValidation validators
         services.AddValidatorsFromAssemblyContaining<Program>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddDevelopmentServices(
+        this IServiceCollection services,
+        IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            services.AddScoped<DatabaseSeeder>();
+            services.AddScoped<MasterDataSeeder>();
+            services.AddScoped<RecipeSeeder>();
+            services.AddScoped<UsageHistorySeeder>();
+        }
 
         return services;
     }

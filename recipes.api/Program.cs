@@ -15,6 +15,9 @@ builder.Services.AddApplicationServices();
 // Add FluentValidation
 builder.Services.AddValidationServices();
 
+// Add Development Services (seeding)
+builder.Services.AddDevelopmentServices(builder.Environment);
+
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
