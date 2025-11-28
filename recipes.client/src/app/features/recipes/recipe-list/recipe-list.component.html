@@ -1,0 +1,195 @@
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-3xl font-bold mb-8 text-gray-900">Recipes</h1>
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+    </div>
+  } @else if (error()) {
+    <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg" role="alert">
+      <p class="font-medium">Error loading recipes</p>
+      <p class="text-sm">{{ error() }}</p>
+    </div>
+  } @else if (totalCount() === 0) {
+    <div class="text-center py-12">
+      <p class="text-gray-600 text-lg">No recipes found.</p>
+    </div>
+  } @else {
+    <!-- Sorting Controls -->
+    <div class="mb-6 flex items-center gap-4">
+      <span class="text-sm font-medium text-gray-700">Sort by:</span>
+      <div class="flex flex-wrap gap-2">
+        <button
+          (click)="sortByField('name')"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-blue-600]="sortBy() === 'name'"
+          [class.text-white]="sortBy() === 'name'"
+          [class.border-blue-600]="sortBy() === 'name'"
+          [class.bg-white]="sortBy() !== 'name'"
+          [class.text-gray-700]="sortBy() !== 'name'"
+          [class.border-gray-300]="sortBy() !== 'name'"
+          [class.hover:bg-gray-50]="sortBy() !== 'name'"
+        >
+          Name
+          @if (sortBy() === 'name') {
+            <span class="ml-1">{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+
+        <button
+          (click)="sortByField('createdAt')"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-blue-600]="sortBy() === 'createdAt'"
+          [class.text-white]="sortBy() === 'createdAt'"
+          [class.border-blue-600]="sortBy() === 'createdAt'"
+          [class.bg-white]="sortBy() !== 'createdAt'"
+          [class.text-gray-700]="sortBy() !== 'createdAt'"
+          [class.border-gray-300]="sortBy() !== 'createdAt'"
+          [class.hover:bg-gray-50]="sortBy() !== 'createdAt'"
+        >
+          Date Created
+          @if (sortBy() === 'createdAt') {
+            <span class="ml-1">{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+
+        <button
+          (click)="sortByField('prepTime')"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-blue-600]="sortBy() === 'prepTime'"
+          [class.text-white]="sortBy() === 'prepTime'"
+          [class.border-blue-600]="sortBy() === 'prepTime'"
+          [class.bg-white]="sortBy() !== 'prepTime'"
+          [class.text-gray-700]="sortBy() !== 'prepTime'"
+          [class.border-gray-300]="sortBy() !== 'prepTime'"
+          [class.hover:bg-gray-50]="sortBy() !== 'prepTime'"
+        >
+          Prep Time
+          @if (sortBy() === 'prepTime') {
+            <span class="ml-1">{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+
+        <button
+          (click)="sortByField('cookTime')"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-blue-600]="sortBy() === 'cookTime'"
+          [class.text-white]="sortBy() === 'cookTime'"
+          [class.border-blue-600]="sortBy() === 'cookTime'"
+          [class.bg-white]="sortBy() !== 'cookTime'"
+          [class.text-gray-700]="sortBy() !== 'cookTime'"
+          [class.border-gray-300]="sortBy() !== 'cookTime'"
+          [class.hover:bg-gray-50]="sortBy() !== 'cookTime'"
+        >
+          Cook Time
+          @if (sortBy() === 'cookTime') {
+            <span class="ml-1">{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+
+        <button
+          (click)="sortByField('difficulty')"
+          class="px-3 py-1.5 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-blue-600]="sortBy() === 'difficulty'"
+          [class.text-white]="sortBy() === 'difficulty'"
+          [class.border-blue-600]="sortBy() === 'difficulty'"
+          [class.bg-white]="sortBy() !== 'difficulty'"
+          [class.text-gray-700]="sortBy() !== 'difficulty'"
+          [class.border-gray-300]="sortBy() !== 'difficulty'"
+          [class.hover:bg-gray-50]="sortBy() !== 'difficulty'"
+        >
+          Difficulty
+          @if (sortBy() === 'difficulty') {
+            <span class="ml-1">{{ sortOrder() === 'asc' ? '↑' : '↓' }}</span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Recipe List -->
+    <div class="space-y-6 mb-8">
+      @for (recipe of recipes(); track recipe.id) {
+        <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow cursor-pointer">
+          <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ recipe.name }}</h2>
+          <p class="text-gray-700 mb-4">{{ recipe.description }}</p>
+          <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+            <div class="flex items-center gap-1">
+              <span class="font-medium">Prep:</span>
+              <span>{{ formatTime(recipe.prepTime) }}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="font-medium">Cook:</span>
+              <span>{{ formatTime(recipe.cookTime) }}</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="font-medium">Difficulty:</span>
+              <span
+                class="px-2 py-0.5 rounded"
+                [class.bg-green-100]="recipe.difficulty <= 2"
+                [class.text-green-800]="recipe.difficulty <= 2"
+                [class.bg-yellow-100]="recipe.difficulty > 2 && recipe.difficulty <= 4"
+                [class.text-yellow-800]="recipe.difficulty > 2 && recipe.difficulty <= 4"
+                [class.bg-red-100]="recipe.difficulty > 4"
+                [class.text-red-800]="recipe.difficulty > 4"
+              >
+                {{ getDifficultyLabel(recipe.difficulty) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="flex items-center justify-between border-t border-gray-200 pt-6">
+      <div class="text-sm text-gray-700">
+        Showing <span class="font-medium">{{ startIndex() }}</span> to
+        <span class="font-medium">{{ endIndex() }}</span> of
+        <span class="font-medium">{{ totalCount() }}</span> recipes
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button
+          (click)="previousPage()"
+          [disabled]="!canGoPrevious()"
+          class="px-4 py-2 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-white]="canGoPrevious()"
+          [class.text-gray-700]="canGoPrevious()"
+          [class.border-gray-300]="canGoPrevious()"
+          [class.hover:bg-gray-50]="canGoPrevious()"
+          [class.bg-gray-100]="!canGoPrevious()"
+          [class.text-gray-400]="!canGoPrevious()"
+          [class.border-gray-200]="!canGoPrevious()"
+          [class.cursor-not-allowed]="!canGoPrevious()"
+          [attr.aria-label]="'Go to previous page'"
+          [attr.aria-disabled]="!canGoPrevious()"
+        >
+          Previous
+        </button>
+
+        <span class="text-sm text-gray-700">
+          Page <span class="font-medium">{{ currentPage() }}</span> of
+          <span class="font-medium">{{ totalPages() }}</span>
+        </span>
+
+        <button
+          (click)="nextPage()"
+          [disabled]="!canGoNext()"
+          class="px-4 py-2 text-sm font-medium rounded-md border transition-colors"
+          [class.bg-white]="canGoNext()"
+          [class.text-gray-700]="canGoNext()"
+          [class.border-gray-300]="canGoNext()"
+          [class.hover:bg-gray-50]="canGoNext()"
+          [class.bg-gray-100]="!canGoNext()"
+          [class.text-gray-400]="!canGoNext()"
+          [class.border-gray-200]="!canGoNext()"
+          [class.cursor-not-allowed]="!canGoNext()"
+          [attr.aria-label]="'Go to next page'"
+          [attr.aria-disabled]="!canGoNext()"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  }
+</div>
