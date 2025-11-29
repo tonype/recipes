@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit, effect, resource } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { getDifficultyLabel, formatTime } from '../../../shared/utils/recipe.utils';
@@ -8,7 +8,7 @@ import { SortField } from '../../../shared/models/pagination.model';
 @Component({
   selector: 'app-recipe-list',
   templateUrl: './recipe-list.component.html',
-  imports: [],
+  imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeListComponent implements OnInit {
@@ -61,20 +61,13 @@ export class RecipeListComponent implements OnInit {
   canGoNext = computed(() => this.currentPage() < this.totalPages());
 
   constructor() {
-    // Sync state changes to URL query parameters
+    // Sync page number to URL query parameters
     effect(() => {
-      const params: any = {
-        page: this.currentPage().toString()
-      };
-
-      if (this.sortBy()) {
-        params.sortBy = this.sortBy();
-        params.sortOrder = this.sortOrder();
-      }
-
       this.router.navigate([], {
         relativeTo: this.route,
-        queryParams: params,
+        queryParams: {
+          page: this.currentPage().toString()
+        },
         queryParamsHandling: '',
         replaceUrl: true
       });
@@ -90,17 +83,10 @@ export class RecipeListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Read initial state from URL ONCE and set signals (triggers resource load automatically)
+    // Read page number from URL (sort/filter state uses default values)
     const params = this.route.snapshot.queryParams;
     const page = parseInt(params['page']) || 1;
-    const sortBy = params['sortBy'] as SortField | undefined;
-    const sortOrder = params['sortOrder'] as 'asc' | 'desc' || 'asc';
-
     this.currentPage.set(page);
-    if (sortBy) {
-      this.sortBy.set(sortBy);
-    }
-    this.sortOrder.set(sortOrder);
   }
 
   nextPage(): void {

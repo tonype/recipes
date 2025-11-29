@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { Recipe } from '../../shared/models/recipe.model';
+import { Recipe, CreateRecipeRequest } from '../../shared/models/recipe.model';
 import { PagedResponse, RecipeQueryParams } from '../../shared/models/pagination.model';
 import { environment } from '../../../environments/environment.development';
 
@@ -37,6 +37,21 @@ export class RecipeService {
       catchError(error => {
         console.error('Error fetching recipes:', error);
         return throwError(() => new Error('Failed to load recipes. Please try again later.'));
+      })
+    );
+  }
+
+  createRecipe(request: CreateRecipeRequest): Observable<Recipe> {
+    return this.http.post<Recipe>(this.apiUrl, request).pipe(
+      catchError(error => {
+        console.error('Error creating recipe:', error);
+
+        if (error.status === 400 && error.error?.errors) {
+          const errorMessages = Object.values(error.error.errors).flat().join(', ');
+          return throwError(() => new Error(errorMessages));
+        }
+
+        return throwError(() => new Error('Failed to create recipe. Please try again later.'));
       })
     );
   }

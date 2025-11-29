@@ -18,9 +18,6 @@ public class UpdateRecipeValidator : AbstractValidator<UpdateRecipeRequest>
         RuleFor(x => x.Instructions)
             .NotEmpty().WithMessage("Instructions are required");
 
-        RuleFor(x => x.Notes)
-            .NotEmpty().WithMessage("Notes are required");
-
         RuleFor(x => x.PrepTime)
             .GreaterThanOrEqualTo(0).WithMessage("Prep time must be 0 or greater");
 

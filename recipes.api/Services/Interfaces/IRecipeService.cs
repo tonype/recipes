@@ -6,6 +6,7 @@ namespace Recipes.Api.Services.Interfaces;
 public interface IRecipeService
 {
     Task<IEnumerable<RecipeResponse>> GetAllRecipesAsync();
+    Task<PagedResponse<RecipeResponse>> GetRecipesAsync(RecipeQueryParameters parameters);
     Task<RecipeDetailResponse?> GetRecipeByIdAsync(Guid id);
     Task<RecipeResponse> CreateRecipeAsync(CreateRecipeRequest request);
     Task<RecipeResponse?> UpdateRecipeAsync(Guid id, UpdateRecipeRequest request);

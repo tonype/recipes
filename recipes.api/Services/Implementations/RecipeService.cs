@@ -35,6 +35,73 @@ public class RecipeService : IRecipeService
             .ToListAsync();
     }
 
+    public async Task<PagedResponse<RecipeResponse>> GetRecipesAsync(RecipeQueryParameters parameters)
+    {
+        IQueryable<Recipe> query = _context.Recipes;
+
+        query = ApplySorting(query, parameters.SortBy, parameters.SortOrder);
+
+        var totalCount = await query.CountAsync();
+
+        var recipes = await query
+            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+            .Take(parameters.PageSize)
+            .Select(r => new RecipeResponse
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Description = r.Description,
+                Instructions = r.Instructions,
+                Notes = r.Notes,
+                PrepTime = r.PrepTime,
+                CookTime = r.CookTime,
+                Difficulty = r.Difficulty,
+                CreatedAt = r.CreatedAt,
+                UpdatedAt = r.UpdatedAt
+            })
+            .ToListAsync();
+
+        return new PagedResponse<RecipeResponse>(
+            recipes,
+            totalCount,
+            parameters.PageNumber,
+            parameters.PageSize
+        );
+    }
+
+    private static IQueryable<Recipe> ApplySorting(
+        IQueryable<Recipe> query,
+        string? sortBy,
+        string? sortOrder)
+    {
+        if (string.IsNullOrWhiteSpace(sortBy))
+        {
+            return query.OrderByDescending(r => r.CreatedAt);
+        }
+
+        var isDescending = sortOrder?.ToLower() == "desc";
+
+        return sortBy.ToLower() switch
+        {
+            "name" => isDescending
+                ? query.OrderByDescending(r => r.Name)
+                : query.OrderBy(r => r.Name),
+            "createdat" => isDescending
+                ? query.OrderByDescending(r => r.CreatedAt)
+                : query.OrderBy(r => r.CreatedAt),
+            "preptime" => isDescending
+                ? query.OrderByDescending(r => r.PrepTime)
+                : query.OrderBy(r => r.PrepTime),
+            "cooktime" => isDescending
+                ? query.OrderByDescending(r => r.CookTime)
+                : query.OrderBy(r => r.CookTime),
+            "difficulty" => isDescending
+                ? query.OrderByDescending(r => r.Difficulty)
+                : query.OrderBy(r => r.Difficulty),
+            _ => query.OrderByDescending(r => r.CreatedAt)
+        };
+    }
+
     public async Task<RecipeDetailResponse?> GetRecipeByIdAsync(Guid id)
     {
         var recipe = await _context.Recipes

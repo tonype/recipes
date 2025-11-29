@@ -16,10 +16,10 @@ public class RecipesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] RecipeQueryParameters parameters)
     {
-        var recipes = await _recipeService.GetAllRecipesAsync();
-        return Ok(recipes);
+        var pagedRecipes = await _recipeService.GetRecipesAsync(parameters);
+        return Ok(pagedRecipes);
     }
 
     [HttpGet("{id:guid}")]

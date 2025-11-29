@@ -10,3 +10,13 @@ export interface Recipe {
   createdAt: string;     // ISO date string
   updatedAt: string;     // ISO date string
 }
+
+export interface CreateRecipeRequest {
+  name: string;
+  description: string;
+  instructions: string;
+  notes?: string;
+  prepTime: number;
+  cookTime: number;
+  difficulty: number;
+}

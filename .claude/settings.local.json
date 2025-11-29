@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dotnet restore:*)",
       "Bash(dotnet build:*)",
-      "Bash(dotnet ef migrations:*)"
+      "Bash(dotnet ef migrations:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
