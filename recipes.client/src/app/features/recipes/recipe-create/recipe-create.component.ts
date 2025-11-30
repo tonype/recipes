@@ -4,11 +4,13 @@ import { Router } from '@angular/router';
 import { NgIcon } from '@ng-icons/core';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { CreateRecipeRequest } from '../../../shared/models/recipe.model';
+import { TagInputComponent } from '../../../shared/components/tag-input/tag-input.component';
+import { TagSelection } from '../../../shared/models/tag.model';
 
 @Component({
   selector: 'app-recipe-create',
   templateUrl: './recipe-create.component.html',
-  imports: [ReactiveFormsModule, NgIcon],
+  imports: [ReactiveFormsModule, NgIcon, TagInputComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeCreateComponent {
@@ -31,7 +33,8 @@ export class RecipeCreateComponent {
       cookTime: [0, [Validators.required, Validators.min(0)]],
       difficulty: [3, [Validators.required, Validators.min(1), Validators.max(5)]],
       instructions: ['', [Validators.required]],
-      notes: ['']
+      notes: [''],
+      tags: [[] as TagSelection[]]
     });
   }
 
@@ -44,7 +47,20 @@ export class RecipeCreateComponent {
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
 
-    const request: CreateRecipeRequest = this.recipeForm.value;
+    const formValue = this.recipeForm.value;
+    const request: CreateRecipeRequest = {
+      name: formValue.name,
+      description: formValue.description,
+      prepTime: formValue.prepTime,
+      cookTime: formValue.cookTime,
+      difficulty: formValue.difficulty,
+      instructions: formValue.instructions,
+      notes: formValue.notes,
+      tags: formValue.tags?.map((tag: TagSelection) => ({
+        tagId: tag.isNew ? undefined : tag.id,
+        tagName: tag.isNew ? tag.name : undefined
+      })) || []
+    };
 
     this.recipeService.createRecipe(request).subscribe({
       next: () => {
@@ -87,7 +103,8 @@ export class RecipeCreateComponent {
       cookTime: 'Cook time',
       difficulty: 'Difficulty',
       instructions: 'Instructions',
-      notes: 'Notes'
+      notes: 'Notes',
+      tags: 'Tags'
     };
     return labels[fieldName] || fieldName;
   }

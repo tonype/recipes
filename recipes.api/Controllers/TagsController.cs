@@ -32,6 +32,16 @@ public class TagsController : ControllerBase
         return Ok(tag);
     }
 
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchTags([FromQuery] string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return Ok(new List<object>());
+
+        var tags = await _tagService.SearchTagsAsync(query);
+        return Ok(tags);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateTagRequest request)
     {

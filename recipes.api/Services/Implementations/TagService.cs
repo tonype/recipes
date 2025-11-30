@@ -74,4 +74,20 @@ public class TagService : ITagService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<IEnumerable<TagResponse>> SearchTagsAsync(string query)
+    {
+        return await _context.Tags
+            .Where(t => t.Name.ToLower().Contains(query.ToLower()))
+            .OrderBy(t => t.Name)
+            .Take(10)
+            .Select(t => new TagResponse
+            {
+                Id = t.Id,
+                Name = t.Name,
+                CreatedAt = t.CreatedAt,
+                UpdatedAt = t.UpdatedAt
+            })
+            .ToListAsync();
+    }
 }

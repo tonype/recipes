@@ -1,0 +1,85 @@
+<div class="tag-input-wrapper">
+  <!-- Selected Tags Display -->
+  @if (selectedTags().length > 0) {
+    <div class="selected-tags mb-3">
+      @for (tag of selectedTags(); track tag.name) {
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 mr-2 mb-2">
+          {{ tag.name }}
+          @if (tag.isNew) {
+            <span class="ml-1 text-xs opacity-75">(new)</span>
+          }
+          <button
+            type="button"
+            (click)="removeTag(tag)"
+            class="ml-2 mt-1 text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 transition-colors cursor-pointer"
+            [attr.aria-label]="'Remove ' + tag.name + ' tag'"
+          >
+            <ng-icon name="matClose" class="w-4 h-4" />
+          </button>
+        </span>
+      }
+    </div>
+  }
+
+  <!-- Search Input Container -->
+  <div class="relative">
+    <input
+      #searchInput
+      type="text"
+      [value]="searchQuery()"
+      (input)="onSearchInput($event)"
+      (focus)="onInputFocus()"
+      (blur)="onInputBlur()"
+      (keydown)="onKeyDown($event)"
+      placeholder="Add tags..."
+      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+      [attr.aria-expanded]="showDropdown()"
+      [attr.aria-haspopup]="'listbox'"
+      [attr.aria-owns]="showDropdown() ? 'tag-dropdown' : null"
+    />
+
+    <!-- Dropdown Results -->
+    @if (showDropdown()) {
+      <div
+        id="tag-dropdown"
+        class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto"
+        role="listbox"
+      >
+        @if (isSearching()) {
+          <div class="px-3 py-2 text-gray-500 text-sm flex items-center">
+            <ng-icon name="matRefresh" class="animate-spin w-4 h-4 mr-2" />
+            Searching...
+          </div>
+        } @else {
+          @if (filteredResults().length === 0 && searchQuery().trim() && !canCreateNew()) {
+            <div class="px-3 py-2 text-gray-500 text-sm">No tags found</div>
+          } @else {
+            @for (result of filteredResults(); track result.id) {
+              <button
+                type="button"
+                class="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors"
+                (click)="selectTag(result)"
+                role="option"
+                [attr.aria-selected]="false"
+              >
+                {{ result.name }}
+              </button>
+            }
+            @if (canCreateNew()) {
+              <button
+                type="button"
+                class="w-full px-3 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none border-t border-gray-200 transition-colors"
+                (click)="createNewTag()"
+                role="option"
+                [attr.aria-selected]="false"
+              >
+                <ng-icon name="heroPlus" class="w-4 h-4 inline mr-2" />
+                Create "{{ searchQuery() }}"
+              </button>
+            }
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

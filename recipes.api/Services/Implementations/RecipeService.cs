@@ -150,34 +150,98 @@ public class RecipeService : IRecipeService
 
     public async Task<RecipeResponse> CreateRecipeAsync(CreateRecipeRequest request)
     {
-        var recipe = new Recipe
+        using var transaction = await _context.Database.BeginTransactionAsync();
+        try
         {
-            Id = Guid.NewGuid(),
-            Name = request.Name,
-            Description = request.Description,
-            Instructions = request.Instructions,
-            Notes = request.Notes,
-            PrepTime = request.PrepTime,
-            CookTime = request.CookTime,
-            Difficulty = request.Difficulty
-        };
+            var recipe = new Recipe
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Name,
+                Description = request.Description,
+                Instructions = request.Instructions,
+                Notes = request.Notes,
+                PrepTime = request.PrepTime,
+                CookTime = request.CookTime,
+                Difficulty = request.Difficulty
+            };
 
-        _context.Recipes.Add(recipe);
-        await _context.SaveChangesAsync();
+            _context.Recipes.Add(recipe);
+            await _context.SaveChangesAsync();
 
-        return new RecipeResponse
+            // Process tags if any are provided
+            if (request.Tags?.Any() == true)
+            {
+                foreach (var tagRequest in request.Tags.Where(t => t != null))
+                {
+                    Tag tag;
+
+                    if (tagRequest.TagId.HasValue)
+                    {
+                        // Existing tag - use ID directly
+                        tag = await _context.Tags.FindAsync(tagRequest.TagId.Value);
+                        if (tag == null)
+                            throw new ArgumentException($"Tag with ID {tagRequest.TagId} not found");
+                    }
+                    else if (!string.IsNullOrWhiteSpace(tagRequest.TagName))
+                    {
+                        // New tag - check if name exists, create if not
+                        var trimmedTagName = tagRequest.TagName.Trim();
+                        var existingTag = await _context.Tags
+                            .FirstOrDefaultAsync(t => t.Name.ToLower() == trimmedTagName.ToLower());
+
+                        if (existingTag != null)
+                        {
+                            tag = existingTag;
+                        }
+                        else
+                        {
+                            tag = new Tag
+                            {
+                                Id = Guid.NewGuid(),
+                                Name = trimmedTagName
+                            };
+                            _context.Tags.Add(tag);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        continue; // Skip invalid tag requests
+                    }
+
+                    // Create recipe-tag association using ID
+                    var recipeTag = new RecipeTag
+                    {
+                        RecipeId = recipe.Id,
+                        TagId = tag.Id
+                    };
+                    _context.RecipeTags.Add(recipeTag);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            await transaction.CommitAsync();
+
+            return new RecipeResponse
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                Description = recipe.Description,
+                Instructions = recipe.Instructions,
+                Notes = recipe.Notes,
+                PrepTime = recipe.PrepTime,
+                CookTime = recipe.CookTime,
+                Difficulty = recipe.Difficulty,
+                CreatedAt = recipe.CreatedAt,
+                UpdatedAt = recipe.UpdatedAt
+            };
+        }
+        catch
         {
-            Id = recipe.Id,
-            Name = recipe.Name,
-            Description = recipe.Description,
-            Instructions = recipe.Instructions,
-            Notes = recipe.Notes,
-            PrepTime = recipe.PrepTime,
-            CookTime = recipe.CookTime,
-            Difficulty = recipe.Difficulty,
-            CreatedAt = recipe.CreatedAt,
-            UpdatedAt = recipe.UpdatedAt
-        };
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<RecipeResponse?> UpdateRecipeAsync(Guid id, UpdateRecipeRequest request)

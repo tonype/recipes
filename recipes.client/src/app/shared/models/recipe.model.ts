@@ -1,3 +1,5 @@
+import { CreateRecipeTagRequest } from './tag.model';
+
 export interface Recipe {
   id: string;
   name: string;
@@ -19,4 +21,5 @@ export interface CreateRecipeRequest {
   prepTime: number;
   cookTime: number;
   difficulty: number;
+  tags?: CreateRecipeTagRequest[];
 }

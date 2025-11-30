@@ -9,4 +9,5 @@ public interface ITagService
     Task<TagResponse?> GetTagByIdAsync(Guid id);
     Task<TagResponse> CreateTagAsync(CreateTagRequest request);
     Task<bool> DeleteTagAsync(Guid id);
+    Task<IEnumerable<TagResponse>> SearchTagsAsync(string query);
 }

@@ -9,4 +9,5 @@ public class CreateRecipeRequest
     public int PrepTime { get; set; }
     public int CookTime { get; set; }
     public int Difficulty { get; set; }
+    public List<CreateRecipeTagRequest> Tags { get; set; } = new List<CreateRecipeTagRequest>();
 }
