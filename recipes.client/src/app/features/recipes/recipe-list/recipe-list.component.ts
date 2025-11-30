@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit, effect, resource } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { NgIcon } from '@ng-icons/core';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { getDifficultyLabel, formatTime } from '../../../shared/utils/recipe.utils';
 import { SortField } from '../../../shared/models/pagination.model';
@@ -8,7 +9,7 @@ import { SortField } from '../../../shared/models/pagination.model';
 @Component({
   selector: 'app-recipe-list',
   templateUrl: './recipe-list.component.html',
-  imports: [RouterLink],
+  imports: [RouterLink, NgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeListComponent implements OnInit {

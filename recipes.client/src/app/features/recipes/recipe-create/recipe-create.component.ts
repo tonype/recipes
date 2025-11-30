@@ -1,13 +1,14 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgIcon } from '@ng-icons/core';
 import { RecipeService } from '../../../core/services/recipe.service';
 import { CreateRecipeRequest } from '../../../shared/models/recipe.model';
 
 @Component({
   selector: 'app-recipe-create',
   templateUrl: './recipe-create.component.html',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, NgIcon],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecipeCreateComponent {
